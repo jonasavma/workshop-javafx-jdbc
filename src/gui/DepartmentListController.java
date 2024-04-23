@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-
 import application.Main;
 import gui.util.Alerts;
 import gui.utils.Util;
@@ -46,10 +45,11 @@ public class DepartmentListController implements Initializable {
 
 	@FXML
 	public void onBtNovoAction(ActionEvent event) {
-		
+
 		Stage parentStage = Util.currentStage(event);
-		
-		createDialogForm("/gui/DepartmentForm.fxml", parentStage);
+		Departamento obj = new Departamento();
+		// nesta caso tem que colocar um parametro a mais obj
+		createDialogForm(obj, "/gui/DepartmentForm.fxml", parentStage);
 	}
 
 	public void setDepartmentService(DepartmentService service) {
@@ -80,11 +80,17 @@ public class DepartmentListController implements Initializable {
 		tableViewDepartamento.setItems(obsList);
 	}
 
-	public void createDialogForm(String absoluteName, Stage parentStage) {
+	// Recebendo o terceiro argumento Departamento obj
+	public void createDialogForm(Departamento obj, String absoluteName, Stage parentStage) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			Pane pane = loader.load();
+			
+			//pegando uma referencia para o controlador
+			DepartmentFormController departmentFormController= loader.getController();
+			departmentFormController.setEntity(obj);
+			departmentFormController.updateFormData();
 
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Enter departamento data");
