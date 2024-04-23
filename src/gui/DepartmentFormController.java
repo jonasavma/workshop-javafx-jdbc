@@ -1,19 +1,28 @@
 package gui;
 
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import db.DbException;
+import gui.util.Alerts;
 import gui.util.Constraints;
+import gui.utils.Util;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entites.Departamento;
+import model.services.DepartmentService;
 
 public class DepartmentFormController implements Initializable {
 
 	private Departamento entity;
+
+	private DepartmentService departmentService;
 
 	@FXML
 	private TextField txtId;
@@ -34,14 +43,46 @@ public class DepartmentFormController implements Initializable {
 		this.entity = entity;
 	}
 
-	@FXML
-	public void onBtSaveAction() {
-		System.out.println("onBtSaveAction");
+	public void setDepartmentService(DepartmentService departmentService) {
+		this.departmentService = departmentService;
 	}
 
 	@FXML
-	public void onBtCancelAction() {
-		System.out.println("onBtCancelAction");
+	public void onBtSaveAction(ActionEvent event) {
+		if (entity == null) {
+			throw new IllegalStateException("Entidade Nula!");
+		}
+
+		if (departmentService == null) {
+			throw new IllegalStateException("Serviços nulo!");
+		}
+
+		try {
+			entity = getFormData();
+			departmentService.saveOrUpadade(entity);
+			//Comando para fecar a janel apos salvar 
+			Util.currentStage(event).close();
+
+		} catch (DbException e) {
+
+			Alerts.mostrarAlerta("Error ao salbar objeto", null, e.getMessage(), AlertType.ERROR);
+		}
+
+	}
+
+	private Departamento getFormData() {
+		Departamento obj = new Departamento();
+
+		// O getTxtId esta no formato de string para converter para inteiro
+		obj.setId(Util.tryParseToInt(txtId.getText()));
+		obj.setNome(txtNome.getText());
+
+		return obj;
+	}
+
+	@FXML
+	public void onBtCancelAction(ActionEvent event) {
+		Util.currentStage(event).close();
 	}
 
 	@Override

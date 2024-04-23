@@ -12,5 +12,15 @@ public class Util {
 		return (Stage) ((Node) event.getSource()).getScene().getWindow();
 		
 	}
+	
+	//Metodo statico ´para converter inteiro para string 
+	public static Integer tryParseToInt(String str) {
+		try {
+			return Integer.parseInt(str);
+			
+		}catch (NumberFormatException e) {
+			return null;
+		}
+	}
 
 }

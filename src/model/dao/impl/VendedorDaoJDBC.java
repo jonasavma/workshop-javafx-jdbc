@@ -29,7 +29,7 @@ public class VendedorDaoJDBC implements VendedorDao {
 	public void insert(Vendedor obj) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("INSERT INTO seller " + "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
+			st = conn.prepareStatement("INSERT INTO vendedor " + "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
 					+ "VALUES " + "(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, obj.getName());
@@ -61,7 +61,7 @@ public class VendedorDaoJDBC implements VendedorDao {
 	public void update(Vendedor obj) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("UPDATE seller "
+			st = conn.prepareStatement("UPDATE vendedor "
 					+ "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? " + "WHERE Id = ?");
 
 			st.setString(1, obj.getName());
@@ -83,7 +83,7 @@ public class VendedorDaoJDBC implements VendedorDao {
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("DELETE FROM seller WHERE Id = ?");
+			st = conn.prepareStatement("DELETE FROM vendedor WHERE Id = ?");
 
 			st.setInt(1, id);
 
@@ -101,7 +101,7 @@ public class VendedorDaoJDBC implements VendedorDao {
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"SELECT seller.*,department.Name as DepName " + "FROM seller INNER JOIN department "
+					"SELECT vendedor.*,department.Name as DepName " + "FROM seller INNER JOIN department "
 							+ "ON seller.DepartmentId = department.Id " + "WHERE seller.Id = ?");
 
 			st.setInt(1, id);
@@ -127,7 +127,7 @@ public class VendedorDaoJDBC implements VendedorDao {
 		obj.setEmail(rs.getString("Email"));
 		obj.setBaseSalary(rs.getDouble("BaseSalary"));
 		obj.setBirthDate(rs.getDate("BirthDate"));
-		obj.setDepartment(dep);
+		obj.setDepartamento(dep);
 		return obj;
 	}
 

@@ -81,8 +81,8 @@ public class DepartamentoDaoJDBC implements DepartamentoDao {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-				"INSERT INTO department " +
-				"(Name) " +
+				"INSERT INTO departamento " +
+				"(nome) " +
 				"VALUES " +
 				"(?)", 
 				Statement.RETURN_GENERATED_KEYS);
