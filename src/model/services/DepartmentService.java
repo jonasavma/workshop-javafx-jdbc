@@ -24,13 +24,17 @@ public class DepartmentService {
 		return dao.findAll();
 
 	}
-	
+
 	public void saveOrUpadade(Departamento obj) {
-		if(obj.getId()==null) {
+		if (obj.getId() == null) {
 			dao.insert(obj);
-		}else {
+		} else {
 			dao.update(obj);
 		}
+	}
+
+	public void remove(Departamento obj) {
+		dao.deleteById(obj.getId());
 	}
 
 }

@@ -137,7 +137,7 @@ public class DepartamentoDaoJDBC implements DepartamentoDao {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-				"DELETE FROM department WHERE Id = ?");
+				"DELETE FROM departamento WHERE Id = ?");
 
 			st.setInt(1, id);
 
