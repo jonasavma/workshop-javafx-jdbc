@@ -101,8 +101,8 @@ public class VendedorDaoJDBC implements VendedorDao {
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"SELECT vendedor.*,department.Name as DepName " + "FROM seller INNER JOIN department "
-							+ "ON seller.DepartmentId = department.Id " + "WHERE seller.Id = ?");
+					"SELECT vendedor.*,departamento.Nome as DepName " + "FROM vendedor INNER JOIN departamento "
+							+ "ON vendedor.DepartmentId = departamento.Id " + "WHERE vendedor.Id = ?");
 
 			st.setInt(1, id);
 			rs = st.executeQuery();
@@ -144,8 +144,8 @@ public class VendedorDaoJDBC implements VendedorDao {
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"SELECT seller.*,department.Name as DepName " + "FROM seller INNER JOIN department "
-							+ "ON seller.DepartmentId = department.Id " + "ORDER BY Name");
+					"SELECT vendedor.*,departamento.Nome as DepName " + "FROM vendedor INNER JOIN departamento "
+							+ "ON vendedor.DepartmentId = departamento.Id " + "ORDER BY Name");
 
 			rs = st.executeQuery();
 
@@ -179,8 +179,8 @@ public class VendedorDaoJDBC implements VendedorDao {
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"SELECT seller.*,department.Name as DepName " + "FROM seller INNER JOIN department "
-							+ "ON seller.DepartmentId = department.Id " + "WHERE DepartmentId = ? " + "ORDER BY Name");
+					"SELECT vendedor.*,departamento.nome as DepName " + "FROM vendedor INNER JOIN departamento "
+							+ "ON vendedor.DepartmentId = departamento.Id " + "WHERE DepartmentId = ? " + "ORDER BY Name");
 
 			st.setInt(1, departamento.getId());
 
