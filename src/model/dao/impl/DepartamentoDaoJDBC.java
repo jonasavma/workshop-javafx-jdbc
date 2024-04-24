@@ -99,7 +99,7 @@ public class DepartamentoDaoJDBC implements DepartamentoDao {
 				}
 			}
 			else {
-				throw new DbException("Unexpected error! No rows affected!");
+				throw new DbException("Erro inesperado! Nenhuma linha afetada");
 			}
 		}
 		catch (SQLException e) {
@@ -115,8 +115,8 @@ public class DepartamentoDaoJDBC implements DepartamentoDao {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-				"UPDATE department " +
-				"SET Name = ? " +
+				"UPDATE departamento " +
+				"SET Nome = ? " +
 				"WHERE Id = ?");
 
 			st.setString(1, obj.getNome());

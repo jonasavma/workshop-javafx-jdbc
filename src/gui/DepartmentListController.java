@@ -8,17 +8,19 @@ import application.Main;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.utils.Util;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -26,7 +28,7 @@ import javafx.stage.Stage;
 import model.entites.Departamento;
 import model.services.DepartmentService;
 
-public class DepartmentListController implements Initializable,DataChangeListener {
+public class DepartmentListController implements Initializable, DataChangeListener {
 
 	private DepartmentService service;
 
@@ -38,6 +40,9 @@ public class DepartmentListController implements Initializable,DataChangeListene
 
 	@FXML
 	private TableColumn<Departamento, String> tableColumnNome;
+
+	@FXML
+	TableColumn<Departamento, Departamento> tableColumnEDIT;
 
 	@FXML
 	private Button btNome;
@@ -79,6 +84,7 @@ public class DepartmentListController implements Initializable,DataChangeListene
 		List<Departamento> list = service.findAll();
 		obsList = FXCollections.observableArrayList(list);
 		tableViewDepartamento.setItems(obsList);
+		initEditButtons();
 	}
 
 	// Recebendo o terceiro argumento Departamento obj
@@ -87,9 +93,9 @@ public class DepartmentListController implements Initializable,DataChangeListene
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			Pane pane = loader.load();
-			
-			//pegando uma referencia para o controlador
-			DepartmentFormController departmentFormController= loader.getController();
+
+			// pegando uma referencia para o controlador
+			DepartmentFormController departmentFormController = loader.getController();
 			departmentFormController.setEntity(obj);
 			departmentFormController.setDepartmentService(new DepartmentService());
 			departmentFormController.subscribeDataChangeListener(this);
@@ -111,6 +117,27 @@ public class DepartmentListController implements Initializable,DataChangeListene
 	@Override
 	public void onDataChanged() {
 		updateTableView();
-		
+
+	}
+
+	private void initEditButtons() {
+		tableColumnEDIT.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+		tableColumnEDIT.setCellFactory(param -> new TableCell<Departamento, Departamento>() {
+			private final Button button = new Button("edit");
+
+			@Override
+			protected void updateItem(Departamento obj, boolean empty) {
+				super.updateItem(obj, empty);
+
+				if (obj == null) {
+					setGraphic(null);
+					return;
+				}
+
+				setGraphic(button);
+				button.setOnAction(
+						event -> createDialogForm(obj, "/gui/DepartmentForm.fxml", Util.currentStage(event)));
+			}
+		});
 	}
 }
