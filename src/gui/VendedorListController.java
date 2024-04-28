@@ -16,7 +16,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -24,10 +26,11 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entites.Vendedor;
 import model.services.VendedorService;
-
 
 public class VendedorListController implements Initializable, DataChangeListener {
 
@@ -41,13 +44,13 @@ public class VendedorListController implements Initializable, DataChangeListener
 
 	@FXML
 	private TableColumn<Vendedor, String> tableColumnNome;
-	
+
 	@FXML
 	private TableColumn<Vendedor, String> tableColumnEmail;
-	
+
 	@FXML
 	private TableColumn<Vendedor, Date> tableColumnBirthDate;
-	
+
 	@FXML
 	private TableColumn<Vendedor, Double> tableColumnSalario;
 
@@ -68,7 +71,7 @@ public class VendedorListController implements Initializable, DataChangeListener
 		Stage parentStage = Util.currentStage(event);
 		Vendedor obj = new Vendedor();
 		// nesta caso tem que colocar um parametro a mais obj
-		//createDialogForm(obj, "/gui/vendedortForm.fxml", parentStage);
+		createDialogForm(obj, "/gui/vendedorForm.fxml", parentStage);
 	}
 
 	public void setvendedorvendedorService(VendedorService vendedorService) {
@@ -89,7 +92,6 @@ public class VendedorListController implements Initializable, DataChangeListener
 		Util.formatTableColumnDate(tableColumnBirthDate, "dd/MM/yyyy");
 		tableColumnSalario.setCellValueFactory(new PropertyValueFactory<>("baseSalary"));
 		Util.formatTableColumnDouble(tableColumnSalario, 2);
-		
 
 		Stage stage = (Stage) Main.getMainScene().getWindow();
 		tableViewVendedor.prefHeightProperty().bind(stage.heightProperty());
@@ -108,29 +110,32 @@ public class VendedorListController implements Initializable, DataChangeListener
 	}
 
 	// Recebendo o terceiro argumento Vendedor obj
-	/*
-	 * public void createDialogForm(Vendedor obj, String absoluteName, Stage
-	 * parentStage) { try {
-	 * 
-	 * FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-	 * Pane pane = loader.load();
-	 * 
-	 * // pegando uma referencia para o controlador DepartmentFormController
-	 * departmentFormController = loader.getController();
-	 * departmentFormController.setEntity(obj);
-	 * departmentFormController.setvendedorvendedorService(new
-	 * vendedorvendedorService());
-	 * departmentFormController.subscribeDataChangeListener(this);
-	 * departmentFormController.updateFormData();
-	 * 
-	 * Stage dialogStage = new Stage(); dialogStage.setTitle("Enter Vendedor data");
-	 * dialogStage.setScene(new Scene(pane)); dialogStage.setResizable(false);
-	 * dialogStage.initOwner(parentStage);
-	 * dialogStage.initModality(Modality.WINDOW_MODAL); dialogStage.showAndWait();
-	 * 
-	 * } catch (Exception e) { Alerts.mostrarAlerta("IO Exception",
-	 * "Error loading view ", e.getMessage(), AlertType.ERROR); } }
-	 */
+
+	public void createDialogForm(Vendedor obj, String absoluteName, Stage parentStage) {
+		try {
+
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			Pane pane = loader.load();
+
+			// pegando uma referencia para o controlador DepartmentFormController
+			VendedorFormController vendedorFormController = loader.getController();
+			vendedorFormController.setEntity(obj);
+			vendedorFormController.setVendedorService(new VendedorService());
+			vendedorFormController.subscribeDataChangeListener(this);
+			vendedorFormController.updateFormData();
+
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Enter Vendedor data");
+			dialogStage.setScene(new Scene(pane));
+			dialogStage.setResizable(false);
+			dialogStage.initOwner(parentStage);
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.showAndWait();
+
+		} catch (Exception e) {
+			Alerts.mostrarAlerta("IO Exception", "Error loading view ", e.getMessage(), AlertType.ERROR);
+		}
+	}
 
 	@Override
 	public void onDataChanged() {
@@ -152,12 +157,9 @@ public class VendedorListController implements Initializable, DataChangeListener
 					return;
 				}
 
-				
-				/*
-				 * setGraphic(button); button.setOnAction( event -> createDialogForm(obj,
-				 * "/gui/DepartmentForm.fxml", Util.currentStage(event)));
-				 */
-				 
+				setGraphic(button);
+				button.setOnAction(event -> createDialogForm(obj, "/gui/VendedorForm.fxml", Util.currentStage(event)));
+
 			}
 		});
 	}
@@ -194,7 +196,7 @@ public class VendedorListController implements Initializable, DataChangeListener
 				updateTableView();
 			} catch (DbIntegrityException e) {
 				Alerts.mostrarAlerta("Error removing objetc ", null, e.getMessage(), AlertType.ERROR);
-				// TODO: handle  exception
+				// TODO: handle exception
 			}
 		}
 
