@@ -30,6 +30,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entites.Vendedor;
+import model.services.DepartmentService;
 import model.services.VendedorService;
 
 public class VendedorListController implements Initializable, DataChangeListener {
@@ -120,7 +121,10 @@ public class VendedorListController implements Initializable, DataChangeListener
 			// pegando uma referencia para o controlador DepartmentFormController
 			VendedorFormController vendedorFormController = loader.getController();
 			vendedorFormController.setEntity(obj);
-			vendedorFormController.setVendedorService(new VendedorService());
+			// Como o metodo mudou dosi parametros aqui neste metodo tambem muda para dois
+			// argumentos
+			vendedorFormController.setServices(new VendedorService(), new DepartmentService());
+			vendedorFormController.loadAssociatedObjects();
 			vendedorFormController.subscribeDataChangeListener(this);
 			vendedorFormController.updateFormData();
 
@@ -133,6 +137,7 @@ public class VendedorListController implements Initializable, DataChangeListener
 			dialogStage.showAndWait();
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			Alerts.mostrarAlerta("IO Exception", "Error loading view ", e.getMessage(), AlertType.ERROR);
 		}
 	}

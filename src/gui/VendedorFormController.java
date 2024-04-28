@@ -15,16 +15,24 @@ import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.utils.Util;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.util.Callback;
+import model.entites.Departamento;
 import model.entites.Vendedor;
 import model.exceptions.ValidationException;
+import model.services.DepartmentService;
 import model.services.VendedorService;
 
 public class VendedorFormController implements Initializable {
@@ -32,6 +40,9 @@ public class VendedorFormController implements Initializable {
 	private Vendedor entity;
 
 	private VendedorService vendedorService;
+
+	// Atributo para criar um combox
+	private DepartmentService departmentService;
 
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
@@ -51,6 +62,9 @@ public class VendedorFormController implements Initializable {
 	private TextField txtBaseSalary;
 
 	@FXML
+	private ComboBox<Departamento> comboBoxDepartment;
+
+	@FXML
 	private Label labelErrorNome;
 
 	@FXML
@@ -68,6 +82,8 @@ public class VendedorFormController implements Initializable {
 	@FXML
 	private Button btCancel;
 
+	private ObservableList<Departamento> obsList;
+
 	public void subscribeDataChangeListener(DataChangeListener listener) {
 		dataChangeListeners.add(listener);
 	}
@@ -80,8 +96,10 @@ public class VendedorFormController implements Initializable {
 		return vendedorService;
 	}
 
-	public void setVendedorService(VendedorService vendedorService) {
+	// Aterado para auxiliar combox vai injetar dos serviços
+	public void setServices(VendedorService vendedorService, DepartmentService departmentService) {
 		this.vendedorService = vendedorService;
+		this.departmentService = departmentService;
 	}
 
 	@FXML
@@ -155,6 +173,8 @@ public class VendedorFormController implements Initializable {
 		Constraints.setTextFieldMaxLength(txtEmail, 60);
 		Util.formatDatePicker(dpBirthDate, "dd/MM/yyyy");
 
+		initializeComboBoxDepartment();
+
 	}
 
 	// Converter inteiro para string
@@ -174,6 +194,26 @@ public class VendedorFormController implements Initializable {
 			dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault()));
 		}
 
+		if (entity.getDepartamento() == null) {
+			comboBoxDepartment.getSelectionModel().selectFirst();
+
+		} else {
+			comboBoxDepartment.setValue(entity.getDepartamento());
+
+		}
+
+	}
+
+	public void loadAssociatedObjects() {
+
+		if (departmentService == null) {
+			throw new IllegalStateException("Departamentoservice esta nulo ");
+		}
+
+		List<Departamento> list = departmentService.findAll();
+		obsList = FXCollections.observableArrayList(list);
+		comboBoxDepartment.setItems(obsList);
+
 	}
 
 	private void setErrorMessages(Map<String, String> errors) {
@@ -182,5 +222,18 @@ public class VendedorFormController implements Initializable {
 		if (fields.contains("Nome")) {
 			labelErrorNome.setText(errors.get("Nome"));
 		}
+	}
+
+	private void initializeComboBoxDepartment() {
+		Callback<ListView<Departamento>, ListCell<Departamento>> factory = lv -> new ListCell<Departamento>() {
+			@Override
+			protected void updateItem(Departamento item, boolean empty) {
+				super.updateItem(item, empty);
+				setText(empty ? "" : item.getNome());
+			}
+		};
+
+		comboBoxDepartment.setCellFactory(factory);
+		comboBoxDepartment.setButtonCell(factory.call(null));
 	}
 }
