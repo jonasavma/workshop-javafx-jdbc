@@ -126,7 +126,7 @@ public class VendedorDaoJDBC implements VendedorDao {
 		obj.setName(rs.getString("Name"));
 		obj.setEmail(rs.getString("Email"));
 		obj.setBaseSalary(rs.getDouble("BaseSalary"));
-		obj.setBirthDate(rs.getDate("BirthDate"));
+		obj.setBirthDate(new java.util.Date(rs.getTimestamp("BirthDate").getTime()));
 		obj.setDepartamento(dep);
 		return obj;
 	}
@@ -178,9 +178,9 @@ public class VendedorDaoJDBC implements VendedorDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement(
-					"SELECT vendedor.*,departamento.nome as DepName " + "FROM vendedor INNER JOIN departamento "
-							+ "ON vendedor.DepartmentId = departamento.Id " + "WHERE DepartmentId = ? " + "ORDER BY Name");
+			st = conn.prepareStatement("SELECT vendedor.*,departamento.nome as DepName "
+					+ "FROM vendedor INNER JOIN departamento " + "ON vendedor.DepartmentId = departamento.Id "
+					+ "WHERE DepartmentId = ? " + "ORDER BY Name");
 
 			st.setInt(1, departamento.getId());
 

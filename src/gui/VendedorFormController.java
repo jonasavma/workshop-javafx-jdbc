@@ -1,8 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -17,11 +20,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entites.Vendedor;
 import model.exceptions.ValidationException;
-import model.services.DepartmentService;
 import model.services.VendedorService;
 
 public class VendedorFormController implements Initializable {
@@ -29,7 +32,7 @@ public class VendedorFormController implements Initializable {
 	private Vendedor entity;
 
 	private VendedorService vendedorService;
-	
+
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
 	@FXML
@@ -39,7 +42,25 @@ public class VendedorFormController implements Initializable {
 	private TextField txtNome;
 
 	@FXML
+	private TextField txtEmail;
+
+	@FXML
+	private DatePicker dpBirthDate;
+
+	@FXML
+	private TextField txtBaseSalary;
+
+	@FXML
 	private Label labelErrorNome;
+
+	@FXML
+	private Label labelErrorEmail;
+
+	@FXML
+	private Label labelErrorBirthDate;
+
+	@FXML
+	private Label labelErrorBaseSalary;
 
 	@FXML
 	private Button btSave;
@@ -55,7 +76,6 @@ public class VendedorFormController implements Initializable {
 		this.entity = entity;
 	}
 
-	
 	public VendedorService getVendedorService() {
 		return vendedorService;
 	}
@@ -130,7 +150,10 @@ public class VendedorFormController implements Initializable {
 	public void initializeNodes() {
 
 		Constraints.setTextFieldInteger(txtId);
-		Constraints.setTextFieldMaxLength(txtNome, 30);
+		Constraints.setTextFieldMaxLength(txtNome, 70);
+		Constraints.setTextFieldDouble(txtBaseSalary);
+		Constraints.setTextFieldMaxLength(txtEmail, 60);
+		Util.formatDatePicker(dpBirthDate, "dd/MM/yyyy");
 
 	}
 
@@ -143,6 +166,13 @@ public class VendedorFormController implements Initializable {
 		}
 		txtId.setText(String.valueOf(entity.getId()));
 		txtNome.setText(entity.getName());
+		txtEmail.setText(entity.getEmail());
+		// Converter double para string
+		Locale.setDefault(Locale.US);
+		txtBaseSalary.setText(String.format("%2f", entity.getBaseSalary()));
+		if (entity.getBirthDate() != null) {
+			dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault()));
+		}
 
 	}
 
